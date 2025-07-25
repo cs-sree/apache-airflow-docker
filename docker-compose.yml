@@ -1,0 +1,31 @@
+services:
+  airflow:
+    container_name: my-custom-airflow
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./logs:/opt/airflow/logs
+      - ./dags:/opt/airflow/dags
+      - ./plugins:/opt/airflow/plugins
+      - ../../../../Contentstack-Github/Logs-sdk/analytics-data-sync:/app/analytics-data-sync # this is tro trigger the npm run genai-request-usage locally
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor # Use LocalExecutor for local execution and for Production use CeleryExecutor/KubernetesExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=sqlite:////opt/airflow/airflow.db
+      - AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION=true
+      - AIRFLOW__CORE__LOAD_EXAMPLES=false
+      - AIRFLOW__WEBSERVER__EXPOSE_CONFIG=true
+      - AIRFLOW__CORE__DEFAULT_TIMEZONE=Asia/Kolkata
+      - TZ=Asia/Kolkata
+      - PYTHONPATH=/opt/airflow
+    tty: true
+    stdin_open: true
+    command: bash -c "
+      echo 'Starting Airflow setup...' &&
+      airflow db migrate &&
+      echo 'Database migrated' &&
+      echo 'Starting Airflow standalone...' &&
+      airflow standalone
+      "
