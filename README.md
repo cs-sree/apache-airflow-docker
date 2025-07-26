@@ -74,7 +74,7 @@ apache-airflow-docker/
 │       └── genai_npm_request.py          # GenAI npm job execution
 │
 ├── 📁 logs/                              # Airflow task logs (auto-generated)
-│   └── [Task execution logs with IST timestamps]
+│   └── [Task execution logs with UTC timestamps]
 │
 └── 📁 plugins/                           # Custom Airflow plugins
     └── [Custom operators, hooks, sensors]

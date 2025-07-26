@@ -1,0 +1,37 @@
+executor: KubernetesExecutor
+
+airflow:
+  image:
+    repository: apache/airflow
+    tag: "3.0.3"
+  config:
+    AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags/repo/dags
+    AIRFLOW__LOGGING__BASE_LOG_FOLDER: /opt/airflow/logs
+    AIRFLOW__LOGGING__DAG_PROCESSOR_MANAGER_LOG_LOCATION: /opt/airflow/logs/dag_processor_manager/dag_processor_manager.log
+
+dags:
+  gitSync:
+    enabled: true
+    repo: https://github.com/cs-sree/apache-airflow-docker.git
+    branch: main
+    subPath: dags
+    depth: 1
+    wait: 60
+  persistence:
+    enabled: false
+
+logs:
+  persistence:
+    enabled: false
+
+webserver:
+  defaultUser:
+    enabled: true
+    username: admin
+    password: admin
+  service:
+    type: NodePort
+    ports:
+      - name: airflow-ui
+        port: 8080
+        nodePort: 30080
